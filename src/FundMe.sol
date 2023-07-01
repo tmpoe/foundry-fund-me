@@ -13,13 +13,17 @@ contract FundMe is Ownable {
 
     mapping(address => uint256) public s_addressToAmountFunded;
     uint256 public immutable i_minFundUSD;
+    address public immutable i_priceFeedAddress;
 
-    constructor(uint256 minFundUSD) Ownable(msg.sender) {
+    constructor(uint256 minFundUSD, address priceFeedAddress)
+        Ownable(msg.sender)
+    {
         i_minFundUSD = minFundUSD;
+        i_priceFeedAddress = priceFeedAddress;
     }
 
     function fund() public payable {
-        if (msg.value.convert() < i_minFundUSD) {
+        if (msg.value.convert(i_priceFeedAddress) < i_minFundUSD) {
             revert FundMe__TooLowFundSent();
         }
 
