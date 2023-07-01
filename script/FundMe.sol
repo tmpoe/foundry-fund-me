@@ -8,13 +8,13 @@ import {EthToUsdConverter} from "./EthToUsdConverter.sol";
 error FundMe__TooLowFundSent();
 error FundMe__WithDrawFailed();
 
-contract FundMe {
+contract FundMe is Ownable {
     using EthToUsdConverter for uint256;
 
     mapping(address => uint256) public s_addressToAmountFunded;
     uint256 public immutable i_minFundUSD;
 
-    constructor(uint256 minFundUSD) {
+    constructor(uint256 minFundUSD) Ownable(msg.sender) {
         i_minFundUSD = minFundUSD;
     }
 
@@ -26,7 +26,7 @@ contract FundMe {
         s_addressToAmountFunded[msg.sender] += msg.value;
     }
 
-    function withdraw() public payable {
+    function withdraw() public payable onlyOwner {
         // call will not run out of gas, transfer could and I would not want to have the funds get stuck
         (bool success, ) = payable(msg.sender).call{
             value: address(this).balance
