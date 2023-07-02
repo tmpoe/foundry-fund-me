@@ -24,4 +24,8 @@ contract FundMeTest is Test {
             revert();
         } catch {}
     }
+
+    function testCanFund() public {
+        fundMe.fund{value: 4e10}();
+    }
 }

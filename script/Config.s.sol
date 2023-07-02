@@ -4,6 +4,7 @@ pragma solidity ^0.8.18;
 
 import {Script} from "forge-std/Script.sol";
 import {MockV3Aggregator} from "../test/mocks/MockV3Aggregator.sol";
+import {console} from "forge-std/console.sol";
 
 contract Config is Script {
     struct NetworkConfig {
@@ -18,7 +19,9 @@ contract Config is Script {
     constructor() {
         if (block.chainid == 11155111) {
             activeNetworkConfig = getSepoliaConfig();
-        } else {}
+        } else {
+            activeNetworkConfig = getAnvilConfig();
+        }
     }
 
     function getSepoliaConfig() private pure returns (NetworkConfig memory) {
