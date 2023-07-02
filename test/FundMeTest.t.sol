@@ -9,10 +9,14 @@ import {console} from "forge-std/console.sol";
 
 contract FundMeTest is Test {
     FundMe fundMe;
+    address USER = address(1);
+    uint256 FUND_AMOUNT = 4e10;
+    uint256 public constant STARTING_USER_BALANCE = 10 ether;
 
     function setUp() external {
         DeployFundMe deployFundme = new DeployFundMe();
         fundMe = deployFundme.run();
+        vm.deal(USER, STARTING_USER_BALANCE);
     }
 
     function testFail_CantFundWithInsufficientValueSent() public {
@@ -21,6 +25,16 @@ contract FundMeTest is Test {
         WHEN: fund is called with insufficient value
         THEN: It reverts
         */
+        fundMe.fund();
+    }
+
+    function testCantFundWithInsufficientValueSentVM() public {
+        /*
+        GIVEN: fundMe contract
+        WHEN: fund is called with insufficient value
+        THEN: It reverts
+        */
+        vm.expectRevert();
         fundMe.fund();
     }
 
@@ -36,27 +50,12 @@ contract FundMeTest is Test {
         } catch {}
     }
 
-    function testCanFund() public {
-        /* 
-        GIVEN: fundMe contract
-        WHEN: fund is called with sufficient value
-        THEN: fundMe contract balance is increased by value
-        */
-
-        assertEq(address(fundMe).balance, 0);
-        fundMe.fund{value: 4e10}();
-        assertEq(address(fundMe).balance, 4e10);
-    }
-
-    function testCanWithdraw() public {
+    function testCanWithdraw() public funded {
         /* 
         GIVEN: fundMe contract
         WHEN: withdraw is called
         THEN: fundMe contract balance is 0
         */
-
-        fundMe.fund{value: 4e10}();
-        assertEq(address(fundMe).balance, 4e10);
 
         vm.startPrank(fundMe.owner());
         fundMe.withdraw();
@@ -65,15 +64,21 @@ contract FundMeTest is Test {
         assertEq(address(fundMe).balance, 0);
     }
 
-    function testFail_CantWithdrawFromNonOwnerAccount() public {
+    function testFail_CantWithdrawFromNonOwnerAccount() public funded {
         /* 
         GIVEN: fundMe contract
         WHEN: withdraw is called
         THEN: it reverts
         */
 
-        fundMe.fund{value: 4e10}();
-        assertEq(address(fundMe).balance, 4e10);
         fundMe.withdraw();
+    }
+
+    modifier funded() {
+        vm.startPrank(USER);
+        uint256 initBalance = address(fundMe).balance;
+        fundMe.fund{value: FUND_AMOUNT}();
+        assert(address(fundMe).balance > initBalance);
+        _;
     }
 }
