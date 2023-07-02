@@ -12,7 +12,7 @@ error FundMe__WithDrawFailed();
 contract FundMe is Ownable {
     using EthToUsdConverter for uint256;
 
-    mapping(address => uint256) public s_addressToAmountFunded;
+    mapping(address => uint256) private s_addressToAmountFunded;
     uint256 public immutable i_minFundUSD;
     address public immutable i_priceFeedAddress;
 
@@ -41,6 +41,14 @@ contract FundMe is Ownable {
         if (!success) {
             revert FundMe__WithDrawFailed();
         }
+    }
+
+    function getAmountFundedForUser(address user)
+        public
+        view
+        returns (uint256)
+    {
+        return s_addressToAmountFunded[user];
     }
 
     receive() external payable {

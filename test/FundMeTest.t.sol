@@ -81,7 +81,7 @@ contract FundMeTest is Test {
         THEN: funder is saved
         */
 
-        assertEq(fundMe.s_addressToAmountFunded(USER), FUND_AMOUNT);
+        assertEq(fundMe.getAmountFundedForUser(USER), FUND_AMOUNT);
     }
 
     modifier funded() {
