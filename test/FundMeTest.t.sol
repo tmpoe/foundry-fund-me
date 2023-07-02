@@ -74,6 +74,16 @@ contract FundMeTest is Test {
         fundMe.withdraw();
     }
 
+    function testFunderSaved() public funded {
+        /*
+        GIVEN: fundMe contract
+        WHEN: fund is called
+        THEN: funder is saved
+        */
+
+        assertEq(fundMe.s_addressToAmountFunded(USER), FUND_AMOUNT);
+    }
+
     modifier funded() {
         vm.startPrank(USER);
         uint256 initBalance = address(fundMe).balance;
