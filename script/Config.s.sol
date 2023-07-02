@@ -26,6 +26,10 @@ contract Config is Script {
     }
 
     function getAnvilConfig() private returns (NetworkConfig memory) {
+        if (activeNetworkConfig.priceFeedAddress != address(0)) {
+            return activeNetworkConfig;
+        }
+
         vm.startBroadcast();
         MockV3Aggregator priceFeed = new MockV3Aggregator(
             DECIMALS,

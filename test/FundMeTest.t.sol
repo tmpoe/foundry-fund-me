@@ -14,7 +14,14 @@ contract FundMeTest is Test {
         fundMe = deployFundme.run();
     }
 
-    function testi() public {
-        assertEq(fundMe.i_minFundUSD(), 5);
+    function testFail_CantFundWithInsufficientValueSent() public {
+        fundMe.fund();
+    }
+
+    function testCantFundWithInsufficientValueSent() public {
+        try fundMe.fund() {
+            // Did not revert in called func
+            revert();
+        } catch {}
     }
 }
