@@ -8,6 +8,8 @@ import {DeployFundMe} from "../script/DeployFundMe.s.sol";
 import {console} from "forge-std/console.sol";
 
 contract FundMeTest is Test {
+    event Funded(address indexed funder, uint256 amount);
+
     FundMe fundMe;
     address USER = address(1);
     uint256 FUND_AMOUNT = 4e10;
@@ -80,7 +82,6 @@ contract FundMeTest is Test {
         WHEN: fund is called
         THEN: funder is saved
         */
-
         assertEq(fundMe.getAmountFundedForUser(USER), FUND_AMOUNT);
         assertEq(fundMe.getFunder(0), USER);
     }
@@ -88,6 +89,8 @@ contract FundMeTest is Test {
     modifier funded() {
         vm.startPrank(USER);
         uint256 initBalance = address(fundMe).balance;
+        vm.expectEmit(address(fundMe));
+        emit Funded(USER, FUND_AMOUNT);
         fundMe.fund{value: FUND_AMOUNT}();
         assert(address(fundMe).balance > initBalance);
         _;

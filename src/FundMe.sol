@@ -12,6 +12,8 @@ error FundMe__WithDrawFailed();
 contract FundMe is Ownable {
     using EthToUsdConverter for uint256;
 
+    event Funded(address indexed funder, uint256 amount);
+
     mapping(address => uint256) private s_addressToAmountFunded;
     address[] private s_funders;
     uint256 public immutable i_minFundUSD;
@@ -33,6 +35,8 @@ contract FundMe is Ownable {
 
         s_addressToAmountFunded[msg.sender] += msg.value;
         s_funders.push(msg.sender);
+
+        emit Funded(msg.sender, msg.value);
     }
 
     function withdraw() public payable onlyOwner {
