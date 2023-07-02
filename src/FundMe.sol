@@ -13,6 +13,7 @@ contract FundMe is Ownable {
     using EthToUsdConverter for uint256;
 
     mapping(address => uint256) private s_addressToAmountFunded;
+    address[] private s_funders;
     uint256 public immutable i_minFundUSD;
     address public immutable i_priceFeedAddress;
 
@@ -31,6 +32,7 @@ contract FundMe is Ownable {
         }
 
         s_addressToAmountFunded[msg.sender] += msg.value;
+        s_funders.push(msg.sender);
     }
 
     function withdraw() public payable onlyOwner {
@@ -49,6 +51,14 @@ contract FundMe is Ownable {
         returns (uint256)
     {
         return s_addressToAmountFunded[user];
+    }
+
+    function getFunder(uint256 index) public view returns (address) {
+        return s_funders[index];
+    }
+
+    function getNumberOfFunders() public view returns (uint256) {
+        return s_funders.length;
     }
 
     receive() external payable {

@@ -82,6 +82,7 @@ contract FundMeTest is Test {
         */
 
         assertEq(fundMe.getAmountFundedForUser(USER), FUND_AMOUNT);
+        assertEq(fundMe.getFunder(0), USER);
     }
 
     modifier funded() {
