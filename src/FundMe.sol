@@ -4,6 +4,7 @@ pragma solidity ^0.8.18;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {EthToUsdConverter} from "./EthToUsdConverter.sol";
+import {console} from "forge-std/console.sol";
 
 error FundMe__TooLowFundSent();
 error FundMe__WithDrawFailed();
@@ -18,6 +19,8 @@ contract FundMe is Ownable {
     constructor(uint256 minFundUSD, address priceFeedAddress)
         Ownable(msg.sender)
     {
+        console.log("called");
+        console.log(msg.sender);
         i_minFundUSD = minFundUSD;
         i_priceFeedAddress = priceFeedAddress;
     }

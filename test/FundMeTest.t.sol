@@ -5,6 +5,7 @@ pragma solidity ^0.8.18;
 import {Test} from "forge-std/Test.sol";
 import {FundMe} from "../src/FundMe.sol";
 import {DeployFundMe} from "../script/DeployFundMe.s.sol";
+import {console} from "forge-std/console.sol";
 
 contract FundMeTest is Test {
     FundMe fundMe;
@@ -45,5 +46,34 @@ contract FundMeTest is Test {
         assertEq(address(fundMe).balance, 0);
         fundMe.fund{value: 4e10}();
         assertEq(address(fundMe).balance, 4e10);
+    }
+
+    function testCanWithdraw() public {
+        /* 
+        GIVEN: fundMe contract
+        WHEN: withdraw is called
+        THEN: fundMe contract balance is 0
+        */
+
+        fundMe.fund{value: 4e10}();
+        assertEq(address(fundMe).balance, 4e10);
+
+        vm.startPrank(fundMe.owner());
+        fundMe.withdraw();
+        vm.stopPrank();
+
+        assertEq(address(fundMe).balance, 0);
+    }
+
+    function testFail_CantWithdrawFromNonOwnerAccount() public {
+        /* 
+        GIVEN: fundMe contract
+        WHEN: withdraw is called
+        THEN: it reverts
+        */
+
+        fundMe.fund{value: 4e10}();
+        assertEq(address(fundMe).balance, 4e10);
+        fundMe.withdraw();
     }
 }
