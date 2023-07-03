@@ -20,3 +20,22 @@ contract Fund is Script {
         fund(mostRecentlyDeployed);
     }
 }
+
+contract Withdraw is Script {
+    function withdraw(address mostRecentlyDeployed) public {
+        FundMe fundMe = FundMe(payable(mostRecentlyDeployed));
+        vm.startPrank(fundMe.owner());
+        vm.startBroadcast();
+        fundMe.withdraw();
+        vm.stopBroadcast();
+        console.log("Withdrew");
+    }
+
+    function run() external {
+        address mostRecentlyDeployed = DevOpsTools.get_most_recent_deployment(
+            "FundMe",
+            block.chainid
+        );
+        withdraw(mostRecentlyDeployed);
+    }
+}
