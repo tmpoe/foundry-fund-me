@@ -1,10 +1,9 @@
+-include .env
+
 install-dev:
 	forge install OpenZeppelin/openzeppelin-contracts --no-commit; \
 	forge install smartcontractkit/chainlink-brownie-contracts --no-commit; \
 	forge install Cyfrin/foundry-devops --no-commit; \
-
-
--include .env
 
 .PHONY: all test clean deploy fund help install snapshot format anvil 
 
